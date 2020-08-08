@@ -33,6 +33,8 @@ namespace RestWithASPNETCore
             //Add Framework services.
             services.AddMvc();
 
+            services.AddApiVersioning();
+
             //Dependency Injection
             services.AddScoped<IPersonService, PersonServiceImpl>();
         }
