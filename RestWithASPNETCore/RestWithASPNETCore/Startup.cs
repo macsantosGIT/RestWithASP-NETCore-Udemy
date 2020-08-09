@@ -10,8 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestWithASPNETCore.Model.Context;
-using RestWithASPNETCore.Services;
-using RestWithASPNETCore.Services.Implementations;
+using RestWithASPNETCore.Business;
+using RestWithASPNETCore.Business.Implementations;
+using RestWithASPNETCore.Repository;
+using RestWithASPNETCore.Repository.Implementations;
 
 namespace RestWithASPNETCore
 {
@@ -36,7 +38,8 @@ namespace RestWithASPNETCore
             services.AddApiVersioning();
 
             //Dependency Injection
-            services.AddScoped<IPersonService, PersonServiceImpl>();
+            services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
+            services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

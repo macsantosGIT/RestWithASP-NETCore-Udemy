@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using RestWithASPNETCore.Model;
 using RestWithASPNETCore.Model.Context;
 
-namespace RestWithASPNETCore.Services.Implementations
+namespace RestWithASPNETCore.Repository.Implementations
 {
-    public class PersonServiceImpl : IPersonService
+    public class PersonRepositoryImpl : IPersonRepository
     {
         private MySQLContext _context;
 
-        public PersonServiceImpl(MySQLContext context)
+        public PersonRepositoryImpl(MySQLContext context)
         {
             _context = context;
         }
@@ -77,9 +77,10 @@ namespace RestWithASPNETCore.Services.Implementations
             return person;
         }
 
-        private bool Exist(long? id)
+        public bool Exist(long? id)
         {
             return _context.Persons.Any();
         }
+
     }
 }
