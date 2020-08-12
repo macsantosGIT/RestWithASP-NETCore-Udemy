@@ -5,17 +5,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="db\migrations\V1_0_1__Create_Table_Persons.sql" />
+    <None Remove="db\migrations\V1_0_2__Alter_Table_Persons.sql" />
+    <None Remove="db\V1_0_1__Create_Table_Persons.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="db\migrations\V1_0_1__Create_Table_Persons.sql" />
+    <Content Include="db\migrations\V1_0_2__Alter_Table_Persons.sql" />
+    <Content Include="db\migrations\V1_0_3__Create_Table_Books.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Evolve" Version="1.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.2.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.21" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
   </ItemGroup>
+  
+  <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
+	<ItemGroup>
+		<ReferencePath Condition="'%(FileName)' == 'MySqlConnector'">
+			<Aliases>MySqlConnectorAlias</Aliases>
+		</ReferencePath>
+	</ItemGroup>
+  </Target>
 
 </Project>

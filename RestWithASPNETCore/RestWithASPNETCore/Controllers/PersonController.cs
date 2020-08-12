@@ -48,7 +48,9 @@ namespace RestWithASPNETCore.Controllers
         public IActionResult Put([FromBody]Person person)
         {
             if (person == null) return BadRequest();
-            return new ObjectResult(_personBusiness.Update(person));
+            var updatePerson = _personBusiness.Update(person);
+            if (updatePerson == null) return NoContent();
+            return new ObjectResult(updatePerson);
         }
 
         // DELETE api/values/5
