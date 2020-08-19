@@ -14,6 +14,7 @@ using RestWithASPNETCore.Business;
 using RestWithASPNETCore.Business.Implementations;
 using RestWithASPNETCore.Repository;
 using RestWithASPNETCore.Repository.Implementations;
+using RestWithASPNETCore.Repository.Generic;
 
 namespace RestWithASPNETCore
 {
@@ -63,6 +64,9 @@ namespace RestWithASPNETCore
             //Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
             services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
+            services.AddScoped<IBookBusiness, BookBusinessImpl>();
+
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

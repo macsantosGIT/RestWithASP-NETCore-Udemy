@@ -39,7 +39,7 @@ namespace RestWithASPNETCore.Repository.Implementations
             var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(id));
             try
             {
-                if(result != null) _context.Remove(result);
+                if(result != null) _context.Persons.Remove(result);
                 _context.SaveChanges();
             }
             catch (Exception ex)
