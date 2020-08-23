@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNETCore.Business;
-using RestWithASPNETCore.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using RestWithASPNETCore.Data.VO;
 
 namespace RestWithASPNETCore.Controllers
 {
@@ -37,7 +33,7 @@ namespace RestWithASPNETCore.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]Book book)
+        public IActionResult Post([FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
             return new ObjectResult(_bookBusiness.Create(book));
@@ -45,7 +41,7 @@ namespace RestWithASPNETCore.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromBody]Book book)
+        public IActionResult Put([FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
             var updateBook = _bookBusiness.Update(book);

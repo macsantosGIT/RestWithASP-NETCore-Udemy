@@ -15,6 +15,7 @@ using RestWithASPNETCore.Business.Implementations;
 using RestWithASPNETCore.Repository;
 using RestWithASPNETCore.Repository.Implementations;
 using RestWithASPNETCore.Repository.Generic;
+using Microsoft.Net.Http.Headers;
 
 namespace RestWithASPNETCore
 {
@@ -57,7 +58,12 @@ namespace RestWithASPNETCore
             }
 
             //Add Framework services.
-            services.AddMvc();
+            services.AddMvc(options => {
+                options.RespectBrowserAcceptHeader = true;
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("text/xml"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/json"));
+            })
+            .AddXmlSerializerFormatters();
 
             services.AddApiVersioning();
 

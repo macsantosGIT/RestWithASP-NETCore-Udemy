@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using RestWithASPNETCore.Model;
+﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNETCore.Business;
+using RestWithASPNETCore.Data.VO;
 
 namespace RestWithASPNETCore.Controllers
 {
@@ -37,7 +33,7 @@ namespace RestWithASPNETCore.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]Person person)
+        public IActionResult Post([FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
             return new ObjectResult(_personBusiness.Create(person));
@@ -45,7 +41,7 @@ namespace RestWithASPNETCore.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromBody]Person person)
+        public IActionResult Put([FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
             var updatePerson = _personBusiness.Update(person);
