@@ -16,6 +16,8 @@ using RestWithASPNETCore.Repository;
 using RestWithASPNETCore.Repository.Implementations;
 using RestWithASPNETCore.Repository.Generic;
 using Microsoft.Net.Http.Headers;
+using Tapioca.HATEOAS;
+using RestWithASPNETCore.HyperMedia;
 
 namespace RestWithASPNETCore
 {
@@ -61,11 +63,18 @@ namespace RestWithASPNETCore
             services.AddMvc(options => {
                 options.RespectBrowserAcceptHeader = true;
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("text/xml"));
-                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/json"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
             })
             .AddXmlSerializerFormatters();
 
-            services.AddApiVersioning();
+            //Define as opções do filtro HATEOAS
+            var filterOptions = new HyperMediaFilterOptions();
+            filterOptions.ObjectContentResponseEnricherList.Add(new PersonEnricher());
+
+            //Injeta o serviço
+            services.AddSingleton(filterOptions);
+
+            services.AddApiVersioning(option => option.ReportApiVersions = true);
 
             //Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
@@ -83,7 +92,11 @@ namespace RestWithASPNETCore
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "DefaultApi",
+                    template: "{controller=Values}/{id?}");
+            });
         }
     }
 }
