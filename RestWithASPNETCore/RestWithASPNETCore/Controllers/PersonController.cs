@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNETCore.Business;
 using RestWithASPNETCore.Data.VO;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
 using Tapioca.HATEOAS;
 
 namespace RestWithASPNETCore.Controllers
@@ -18,6 +20,10 @@ namespace RestWithASPNETCore.Controllers
 
         // GET api/values
         [HttpGet]
+        [SwaggerResponse((200), Type = typeof(List<PersonVO>))]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
@@ -26,6 +32,10 @@ namespace RestWithASPNETCore.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [SwaggerResponse((200), Type = typeof(PersonVO))]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
@@ -36,6 +46,9 @@ namespace RestWithASPNETCore.Controllers
 
         // POST api/values
         [HttpPost]
+        [SwaggerResponse((201), Type = typeof(PersonVO))]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody]PersonVO person)
         {
@@ -45,6 +58,9 @@ namespace RestWithASPNETCore.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
+        [SwaggerResponse((202), Type = typeof(PersonVO))]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put([FromBody]PersonVO person)
         {
@@ -56,6 +72,9 @@ namespace RestWithASPNETCore.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Delete(int id)
         {

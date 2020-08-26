@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNETCore.Business;
 using RestWithASPNETCore.Data.VO;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
+using Tapioca.HATEOAS;
 
 namespace RestWithASPNETCore.Controllers
 {
@@ -17,6 +20,11 @@ namespace RestWithASPNETCore.Controllers
 
         // GET api/values
         [HttpGet]
+        [SwaggerResponse((200), Type = typeof(List<BookVO>))]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
             return Ok(_bookBusiness.FindAll());
@@ -24,6 +32,11 @@ namespace RestWithASPNETCore.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [SwaggerResponse((200), Type = typeof(BookVO))]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(int id)
         {
             var book = _bookBusiness.FindById(id);
@@ -33,6 +46,10 @@ namespace RestWithASPNETCore.Controllers
 
         // POST api/values
         [HttpPost]
+        [SwaggerResponse((201), Type = typeof(BookVO))]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
@@ -41,6 +58,10 @@ namespace RestWithASPNETCore.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
+        [SwaggerResponse((202), Type = typeof(BookVO))]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put([FromBody]BookVO book)
         {
             if (book == null) return BadRequest();
@@ -51,6 +72,10 @@ namespace RestWithASPNETCore.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Delete(int id)
         {
             _bookBusiness.Delete(id);

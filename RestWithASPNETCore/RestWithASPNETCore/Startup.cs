@@ -18,6 +18,9 @@ using RestWithASPNETCore.Repository.Generic;
 using Microsoft.Net.Http.Headers;
 using Tapioca.HATEOAS;
 using RestWithASPNETCore.HyperMedia;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Rewrite;
+using RestWithASPNETCore.Hypermedia;
 
 namespace RestWithASPNETCore
 {
@@ -70,12 +73,22 @@ namespace RestWithASPNETCore
             //Define as opções do filtro HATEOAS
             var filterOptions = new HyperMediaFilterOptions();
             filterOptions.ObjectContentResponseEnricherList.Add(new PersonEnricher());
+            filterOptions.ObjectContentResponseEnricherList.Add(new BookEnricher());
 
             //Injeta o serviço
             services.AddSingleton(filterOptions);
 
             services.AddApiVersioning(option => option.ReportApiVersions = true);
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                    new Info
+                    {
+                        Title = "RESTful API With ASP.NET Core 2.0",
+                        Version = "v1"
+                    });
+            });
             //Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
             services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
@@ -91,6 +104,15 @@ namespace RestWithASPNETCore
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+            app.UseRewriter(option);
 
             app.UseMvc(routes => {
                 routes.MapRoute(
