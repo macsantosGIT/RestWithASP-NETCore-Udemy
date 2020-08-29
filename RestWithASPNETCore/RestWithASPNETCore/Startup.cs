@@ -21,6 +21,9 @@ using RestWithASPNETCore.HyperMedia;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Rewrite;
 using RestWithASPNETCore.Hypermedia;
+using RestWithASPNETCore.Security.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RestWithASPNETCore
 {
@@ -40,30 +43,59 @@ namespace RestWithASPNETCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Connection database
             var connectionString = _configuration["MySqlConnection:MySqlConnection"];
             services.AddDbContext<MySQLContext>(options => options.UseMySql(connectionString));
 
-            if (_environment.IsDevelopment())
+            //Add Migrations support
+            ExecuteMigrations(connectionString);
+
+            //Jwt
+            var signingConfigurations = new SigningConfigurations();
+            services.AddSingleton(signingConfigurations);
+
+            var tokenCongigurations = new TokenCofiguration();
+
+            new ConfigureFromConfigurationOptions<TokenCofiguration>(
+                _configuration.GetSection("TokenCofigurations")
+                )
+                .Configure(tokenCongigurations);
+
+            services.AddSingleton(tokenCongigurations);
+
+            services.AddAuthentication(authOptions =>
             {
-                try
-                {
-                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-                    var evolve = new Evolve.Evolve("evolve.json", evolveConnection, msg => _logger.LogInformation(msg))
-                    {
-                        Locations = new List<string> { "db/migrations" },
-                        IsEraseDisabled = true,
-                    };
-                    evolve.Migrate();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical("Database migration failed.", ex);
-                    throw;
-                }
-            }
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions =>
+            {
+                var paramsValidation = bearerOptions.TokenValidationParameters;
+                paramsValidation.IssuerSigningKey = signingConfigurations.Key;
+                paramsValidation.ValidAudience = tokenCongigurations.Audience;
+                paramsValidation.ValidIssuer = tokenCongigurations.Issuer;
+
+                // Validates the signing of a received token
+                paramsValidation.ValidateIssuerSigningKey = true;
+
+                // Checks if a received token is still valid
+                paramsValidation.ValidateLifetime = true;
+
+                // Tolerance time for the expiration of a token (used in case
+                // of time synchronization problems between different
+                // computers involved in the communication process)
+                paramsValidation.ClockSkew = TimeSpan.Zero;
+            });
+
+            services.AddAuthorization(auth =>
+            {
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser().Build());
+            });
 
             //Add Framework services.
-            services.AddMvc(options => {
+            services.AddMvc(options =>
+            {
                 options.RespectBrowserAcceptHeader = true;
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("text/xml"));
                 options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
@@ -91,10 +123,33 @@ namespace RestWithASPNETCore
             });
             //Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
-            services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
             services.AddScoped<IBookBusiness, BookBusinessImpl>();
+            services.AddScoped<ILoginBusiness, LoginBusinessImpl>();
+            services.AddScoped<IUserRepository, UserRepositoryImpl>();
 
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        }
+
+        private void ExecuteMigrations(string connectionString)
+        {
+            if (_environment.IsDevelopment())
+            {
+                try
+                {
+                    var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+                    var evolve = new Evolve.Evolve("evolve.json", evolveConnection, msg => _logger.LogInformation(msg))
+                    {
+                        Locations = new List<string> { "db/migrations" },
+                        IsEraseDisabled = true,
+                    };
+                    evolve.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical("Database migration failed.", ex);
+                    throw;
+                }
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
