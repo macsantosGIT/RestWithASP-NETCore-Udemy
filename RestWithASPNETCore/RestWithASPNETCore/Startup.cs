@@ -126,8 +126,9 @@ namespace RestWithASPNETCore
             services.AddScoped<IBookBusiness, BookBusinessImpl>();
             services.AddScoped<ILoginBusiness, LoginBusinessImpl>();
             services.AddScoped<IUserRepository, UserRepositoryImpl>();
+            services.AddScoped<IPersonRepository, PersonRepositoryImpl>();
 
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IPersonRepository<>), typeof(GenericRepository<>));
         }
 
         private void ExecuteMigrations(string connectionString)

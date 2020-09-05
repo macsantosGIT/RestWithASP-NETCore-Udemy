@@ -8,10 +8,10 @@ namespace RestWithASPNETCore.Business.Implementations
 {
     public class BookBusinessImpl : IBookBusiness
     {
-        private IRepository<Book> _repository;
+        private IPersonRepository<Book> _repository;
         private readonly BookConverter _converter;
 
-        public BookBusinessImpl(IRepository<Book> repository)
+        public BookBusinessImpl(IPersonRepository<Book> repository)
         {
             _repository = repository;
             _converter = new BookConverter();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RestWithASPNETCore.Repository.Generic
 {
-    public interface IRepository<T> where T : BaseEntity
+    public interface IPersonRepository<T> where T : BaseEntity
     {
         T Create(T item);
         T FindById(long id);
@@ -15,5 +15,7 @@ namespace RestWithASPNETCore.Repository.Generic
         void Delete(long id);
 
         bool Exist(long? id);
+        List<T> FindWithPagedSearch(string query);
+        int GetCount(string query);
     }
 }

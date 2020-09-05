@@ -32,6 +32,33 @@ namespace RestWithASPNETCore.Controllers
             return Ok(_personBusiness.FindAll());
         }
 
+        // GET api/values
+        [HttpGet("find-by-name")]
+        [SwaggerResponse((200), Type = typeof(List<PersonVO>))]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [Authorize("Bearer")]
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult GetByName([FromQuery] string firstName, [FromQuery] string lastName)
+        {
+            return Ok(_personBusiness.FindByName(firstName, lastName));
+        }
+
+
+        // GET api/values
+        [HttpGet("find-with-paged-search/{sortDirection}/{pageSize}/{page}")]
+        [SwaggerResponse((200), Type = typeof(List<PersonVO>))]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [Authorize("Bearer")]
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult GetPagedSearch([FromQuery] string name, string sortDirection, int pageSize, int page)
+        {
+            return new OkObjectResult(_personBusiness.FindWithPageSearch(name, sortDirection, pageSize, page));
+        }
+
         // GET api/values/5
         [HttpGet("{id}")]
         [SwaggerResponse((200), Type = typeof(PersonVO))]
@@ -68,6 +95,21 @@ namespace RestWithASPNETCore.Controllers
         [Authorize("Bearer")]
         [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put([FromBody]PersonVO person)
+        {
+            if (person == null) return BadRequest();
+            var updatePerson = _personBusiness.Update(person);
+            if (updatePerson == null) return NoContent();
+            return new ObjectResult(updatePerson);
+        }
+
+        // Patch api/values/5
+        [HttpPatch("{id}")]
+        [SwaggerResponse((202), Type = typeof(PersonVO))]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [Authorize("Bearer")]
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult Patch([FromBody]PersonVO person)
         {
             if (person == null) return BadRequest();
             var updatePerson = _personBusiness.Update(person);

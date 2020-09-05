@@ -75,6 +75,21 @@ namespace RestWithASPNETCore.Controllers
             return new ObjectResult(updateBook);
         }
 
+        // Patch api/values/5
+        [HttpPatch("{id}")]
+        [SwaggerResponse((202), Type = typeof(BookVO))]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(401)]
+        [Authorize("Bearer")]
+        [TypeFilter(typeof(HyperMediaFilter))]
+        public IActionResult Patch([FromBody]BookVO book)
+        {
+            if (book == null) return BadRequest();
+            var updateBook = _bookBusiness.Update(book);
+            if (updateBook == null) return NoContent();
+            return new ObjectResult(updateBook);
+        }
+
         // DELETE api/values/5
         [HttpDelete("{id}")]
         [SwaggerResponse(204)]
